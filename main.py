@@ -41,15 +41,26 @@ def detectAndDisplay(frame):
         width_ok = False
         height_ok = False
         font = cv.FONT_HERSHEY_SIMPLEX
-        if (center[0] < width//2+rectangle_size and center[0] > width//2-rectangle_size):
-            #print("Face is within rectangle.")
+
+        upper_width_bound =  width//2+rectangle_size
+        lower_width_bound =  width//2-rectangle_size
+        upper_height_bound = height//2+rectangle_size
+        lower_height_bound = height//2-rectangle_size
+
+        if (center[0] < upper_width_bound and center[0] > lower_width_bound):
             width_ok = True
             cv.putText(frame,'Face is within width of rect.',(10, height-50), font, 0.5,(255,255,255),2,cv.LINE_AA)
-
-        if (center[1] < height//2+rectangle_size and center[1] > height//2-rectangle_size):
-            #print("Face is within rectangle.")
+        elif (center[0] > upper_width_bound):
+            cv.putText(frame,'MOVE RIGHT.',(10, height-50), font, 0.5,(0,0,255),2,cv.LINE_AA)
+        elif (center[0] < lower_width_bound):
+            cv.putText(frame,'MOVE LEFT.',(10, height-50), font, 0.5,(0,0,255),2,cv.LINE_AA)
+        if (center[1] < upper_height_bound and center[1] > lower_height_bound):
             height_ok = True
             cv.putText(frame,'Face is within height of rect.',(10, height-25), font, 0.5,(255,255,255),2,cv.LINE_AA)
+        elif (center[1] > upper_height_bound):
+            cv.putText(frame,'MOVE UP.',(10, height-25), font, 0.5,(0,0,255),2,cv.LINE_AA)
+        elif (center[1] < lower_height_bound):
+            cv.putText(frame,'MOVE DOWN.',(10, height-25), font, 0.5,(0,0,255),2,cv.LINE_AA)
 
         if (width_ok and height_ok):
             cv.putText(frame,'Face OK',(10, 25), font, 1,(0,255,0),2,cv.LINE_AA)
