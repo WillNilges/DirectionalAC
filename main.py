@@ -9,7 +9,8 @@ https://docs.opencv.org/master/db/d28/tutorial_cascade_classifier.html
 from __future__ import print_function
 import cv2 as cv
 import argparse
-from gpiozero import LED
+# We are NOT ready to try gpio stuff. Also, we might even use the Nvidia Jetson.
+# from gpiozero import LED
 
 def detectAndDisplay(frame):
     frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -67,10 +68,9 @@ def detectAndDisplay(frame):
 
         if (width_ok and height_ok):
             cv.putText(frame,'Face OK',(10, 25), font, 1,(0,255,0),2,cv.LINE_AA)
-            ok_led.on()
-        
-        else:
-            ok_led.off()
+#            ok_led.on()        
+#        else:
+#            ok_led.off()
 
     cv.imshow('Capture - Face detection', frame)
 
