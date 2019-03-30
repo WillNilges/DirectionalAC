@@ -9,8 +9,12 @@ https://docs.opencv.org/master/db/d28/tutorial_cascade_classifier.html
 from __future__ import print_function
 import cv2 as cv
 import argparse
-# We are NOT ready to try gpio stuff. Also, we might even use the Nvidia Jetson.
-# from gpiozero import LED
+# We are ready™ to try gpio stuff. Also, we might even use the Nvidia Jetson.
+from gpiozero import LED
+up  = LED(17)
+dwn = LED(27)
+lft = LED(22)
+rit = LED(10)
 
 def detectAndDisplay(frame):
     frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -44,8 +48,6 @@ def detectAndDisplay(frame):
         height_ok = False
         font = cv.FONT_HERSHEY_SIMPLEX
         
-        ok_led = LED(17)
-
         upper_width_bound =  width//2+rectangle_size
         lower_width_bound =  width//2-rectangle_size
         upper_height_bound = height//2+rectangle_size
@@ -54,23 +56,37 @@ def detectAndDisplay(frame):
         if (center[0] < upper_width_bound and center[0] > lower_width_bound):
             width_ok = True
             cv.putText(frame,'Face is within width of rect.',(10, height-50), font, 0.5,(255,255,255),2,cv.LINE_AA)
+            lft.off()
+            rit.off()
         elif (center[0] > upper_width_bound):
             cv.putText(frame,'MOVE RIGHT.',(10, height-50), font, 0.5,(0,0,255),2,cv.LINE_AA)
+            lft.off()
+            rit.on()
         elif (center[0] < lower_width_bound):
             cv.putText(frame,'MOVE LEFT.',(10, height-50), font, 0.5,(0,0,255),2,cv.LINE_AA)
+            rit.off()
+            lft.on()
         if (center[1] < upper_height_bound and center[1] > lower_height_bound):
             height_ok = True
             cv.putText(frame,'Face is within height of rect.',(10, height-25), font, 0.5,(255,255,255),2,cv.LINE_AA)
+            up.off()
+            dwn.off()
         elif (center[1] > upper_height_bound):
             cv.putText(frame,'MOVE UP.',(10, height-25), font, 0.5,(0,0,255),2,cv.LINE_AA)
+            dwn.off()
+            up.on()
         elif (center[1] < lower_height_bound):
             cv.putText(frame,'MOVE DOWN.',(10, height-25), font, 0.5,(0,0,255),2,cv.LINE_AA)
+            
+            up.off()
+            dwn.on()
 
         if (width_ok and height_ok):
             cv.putText(frame,'Face OK',(10, 25), font, 1,(0,255,0),2,cv.LINE_AA)
-#            ok_led.on()        
-#        else:
-#            ok_led.off()
+            up.off()
+            dwn.off()
+            lft.off()
+            rit.off()
 
     cv.imshow('Capture - Face detection', frame)
 
@@ -97,6 +113,8 @@ if not eyes_cascade.load(cv.samples.findFile(eyes_cascade_name)):
 camera_device = args.camera
 #-- 2. Read the video stream
 cap = cv.VideoCapture(camera_device)
+#cap.set(3, 180)
+#cap.set(4, 100)
 if not cap.isOpened:
     print('--(!)Error opening video capture')
     exit(0)
