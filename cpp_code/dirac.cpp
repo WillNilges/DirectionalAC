@@ -50,11 +50,13 @@ int main( int argc, const char** argv )
     cout << "Loading face cascade...\n";
     cout << face_cascade_name;
     cout << "\n";
+
     if( !face_cascade.load( face_cascade_name ) )
     {
         cout << "--(!)Error loading face cascade\n";
 //        return -1;
     };
+
     cout << "Loading eyes cascade...\n";
     cout << eyes_cascade_name;
     cout << "\n";
