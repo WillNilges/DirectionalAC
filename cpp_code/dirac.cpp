@@ -39,12 +39,12 @@ int main( int argc, const char** argv )
                              "{eyes_cascade|haarcascade_eye_tree_eyeglasses.xml|Path to eyes cascade.}"
                              "{camera|1|Camera device number.}");
 
-    parser.about( "\nThis program demonstrates using the cv::CascadeClassifier class to detect objects (Face + eyes) in a video stream.\n"
+    parser.about( "\nThis program uses cv::CascadeClassifier class to detect Faces in a video stream and directs a car's AC unit to automatically aim at the face.\n"
                   "You can use Haar or LBP features.\n\n" );
     parser.printMessage();
 // This code is all BULLSHIT!
-    String face_cascade_name = parser.get<String>("face_cascade");
-    String eyes_cascade_name = parser.get<String>("eyes_cascade");
+    String face_cascade_name = parser.get<String>(0);
+    String eyes_cascade_name = parser.get<String>(1);
 
     //-- 1. Load the cascades
     cout << "Loading face cascade...\n";
@@ -66,7 +66,7 @@ int main( int argc, const char** argv )
 //        return -1;
     };
 
-    int camera_device = parser.get<int>("camera");
+    int camera_device = parser.get<int>(2);
     VideoCapture capture;
     //-- 2. Read the video stream
     capture.open( camera_device );
