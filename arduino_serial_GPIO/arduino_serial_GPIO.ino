@@ -11,9 +11,11 @@ void setup() {
   pinMode(right, OUTPUT);
   pinMode(down, OUTPUT);
   pinMode(left, OUTPUT);
+  pinMode(7, OUTPUT);
 }
 
 void loop() {
+  digitalWrite(7, HIGH);
   // put your main code here, to run repeatedly:
   if (Serial.available()>=0){
     int serialIn = Serial.read();

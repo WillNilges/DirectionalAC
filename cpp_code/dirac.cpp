@@ -6,6 +6,7 @@
 #include "opencv2/cudaarithm.hpp"
 #include "opencv2/cudaobjdetect.hpp"
 
+#include <CL/opencl.h>
 #include <iostream>
 #include <csignal>
 #include <stdio.h>      // standard input / output functions
@@ -16,8 +17,12 @@
 #include <errno.h>      // Error number definitions
 #include <termios.h>    // POSIX terminal control definitions
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/ocl.hpp>
+
 using namespace std;
 using namespace cv;
+//using namespace cv::gpu;
 
 /** Function Headers */
 void detectAndDisplay( Mat frame );
@@ -33,7 +38,29 @@ int USB = open( "/dev/ttyACM0", O_RDWR| O_NOCTTY );
 /** @function main */
 int main( int argc, const char** argv )
 {
-    CommandLineParser parser(argc, argv,
+int gpuCount = cuda::getCudaEnabledDeviceCount();
+cout << gpuCount << " GPUs available for cuda.\n";
+if (gpuCount==0) cout << "No usable GPU found for cuda!\n";
+
+cv::ocl::setUseOpenCL(true);
+if (!cv::ocl::haveOpenCL()) {
+    std::cout << "OpenCL is not available..." << std::endl;
+}
+cv::ocl::Context context;
+if (!context.create(cv::ocl::Device::TYPE_ALL)) {
+    std::cout << "Failed creating the context..." << std::endl;
+}
+std::cout << context.ndevices() << " GPU devices are detected." << std::endl; 
+for (int i = 0; i < context.ndevices(); i++) {
+    cv::ocl::Device device = context.device(i);
+    std::cout << "name:              " << device.name() << std::endl;
+    std::cout << "available:         " << device.available() << std::endl;
+    std::cout << "imageSupport:      " << device.imageSupport() << std::endl;
+    std::cout << "OpenCL_C_Version:  " << device.OpenCL_C_Version() << std::endl;
+    std::cout << std::endl;
+}
+
+        CommandLineParser parser(argc, argv,
                              "{help h||}"
                              "{face_cascade|haarcascade_frontalface_alt.xml|Path to face cascade.}"
                              "{eyes_cascade|haarcascade_eye_tree_eyeglasses.xml|Path to eyes cascade.}"
@@ -43,8 +70,8 @@ int main( int argc, const char** argv )
                   "You can use Haar or LBP features.\n\n" );
     parser.printMessage();
 // This code is all BULLSHIT!
-    String face_cascade_name = parser.get<String>(0);
-    String eyes_cascade_name = parser.get<String>(1);
+    String face_cascade_name = parser.get<String>("face_cascade");
+    String eyes_cascade_name = parser.get<String>("eyes_cascade");
 
     //-- 1. Load the cascades
     cout << "Loading face cascade...\n";
@@ -66,7 +93,7 @@ int main( int argc, const char** argv )
 //        return -1;
     };
 
-    int camera_device = parser.get<int>(2);
+    int camera_device = parser.get<int>("camera");
     VideoCapture capture;
     //-- 2. Read the video stream
     capture.open( camera_device );
@@ -160,6 +187,7 @@ void detectAndDisplay( Mat frame )
         Mat faceROI = frame_gray( faces[i] );
 
         //-- In each face, detect eyes
+/*
         std::vector<Rect> eyes;
         eyes_cascade.detectMultiScale( faceROI, eyes );
 
@@ -169,7 +197,7 @@ void detectAndDisplay( Mat frame )
             int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
             circle( frame, eye_center, radius, Scalar( 255, 0, 0 ), 4 );
         }
-
+*/
 	//-- Check if the face is within the rectangle.
         bool width_ok = false;
         bool mv_left = false;
