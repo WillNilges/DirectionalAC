@@ -27,6 +27,7 @@ void loop()
    servo.write(90);      // Turn SG90 servo back to 90 degrees (center position)
    delay(1000);
 
+
 //end control the servo's direction and the position of the motor
 
 
@@ -38,7 +39,7 @@ void loop()
     servo.write(servoAngle);              
     delay(50);                  
   }
-
+  
   for(servoAngle = 180; servoAngle > 0; servoAngle--)  //now move back the micro servo from 0 degrees to 180 degrees
   {                                
     servo.write(servoAngle);          
@@ -46,4 +47,3 @@ void loop()
   }
   //end control the servo's speed  
 }
-
