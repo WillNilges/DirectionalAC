@@ -2,11 +2,11 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/core.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/cudaarithm.hpp"
-#include "opencv2/cudaobjdetect.hpp"
+//#include "opencv2/highgui.hpp"
+//#include "opencv2/cudaarithm.hpp"
+//#include "opencv2/cudaobjdetect.hpp"
 
-#include <CL/opencl.h>
+//#include <CL/opencl.h>
 #include <iostream>
 #include <csignal>
 #include <stdio.h>      // standard input / output functions
@@ -17,8 +17,8 @@
 #include <errno.h>      // Error number definitions
 #include <termios.h>    // POSIX terminal control definitions
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/core/ocl.hpp>
+//#include <opencv2/opencv.hpp>
+//#include <opencv2/core/ocl.hpp>
 
 using namespace std;
 using namespace cv;
@@ -38,6 +38,8 @@ int USB = open( "/dev/ttyACM0", O_RDWR| O_NOCTTY );
 /** @function main */
 int main( int argc, const char** argv )
 {
+// Check for cuda and openCL
+/*
 int gpuCount = cuda::getCudaEnabledDeviceCount();
 cout << gpuCount << " GPUs available for cuda.\n";
 if (gpuCount==0) cout << "No usable GPU found for cuda!\n";
@@ -59,12 +61,12 @@ for (int i = 0; i < context.ndevices(); i++) {
     std::cout << "OpenCL_C_Version:  " << device.OpenCL_C_Version() << std::endl;
     std::cout << std::endl;
 }
-
+*/
         CommandLineParser parser(argc, argv,
                              "{help h||}"
                              "{face_cascade|haarcascade_frontalface_alt.xml|Path to face cascade.}"
                              "{eyes_cascade|haarcascade_eye_tree_eyeglasses.xml|Path to eyes cascade.}"
-                             "{camera|1|Camera device number.}");
+                             "{camera|0|Camera device number.}");
 
     parser.about( "\nThis program uses cv::CascadeClassifier class to detect Faces in a video stream and directs a car's AC unit to automatically aim at the face.\n"
                   "You can use Haar or LBP features.\n\n" );
@@ -96,7 +98,7 @@ for (int i = 0; i < context.ndevices(); i++) {
     int camera_device = parser.get<int>("camera");
     VideoCapture capture;
     //-- 2. Read the video stream
-    capture.open( camera_device );
+    capture.open( 0 );
     if ( ! capture.isOpened() )
     {
         cout << "--(!)Error opening video capture\n";
