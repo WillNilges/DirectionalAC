@@ -1,7 +1,21 @@
+#include <Servo.h>
+
 int up = 13;
 int right = 12;
 int down = 11;
 int left = 10;
+
+int horizontalServo = 5;
+int verticalServo = 6;
+int servoMax = 120;
+int servoMin = 20;
+
+int curHServoAngle = 50;
+int curVServoAngle = 50;
+int servoAdjustmentRate = 1;
+
+Servo hServo;
+Servo vServo;
 
 void setup() {
   // put your setup code here, to run once:
@@ -12,6 +26,37 @@ void setup() {
   pinMode(down, OUTPUT);
   pinMode(left, OUTPUT);
   pinMode(7, OUTPUT);
+
+  hServo.attach(horizontalServo);
+  vServo.attach(verticalServo);
+}
+
+void hServoUp(){
+  if (curHServoAngle < servoMax){
+          curHServoAngle-=servoAdjustmentRate;
+          hServo.write(curHServoAngle);
+        }
+}
+
+void hServoDown(){
+  if (curHServoAngle > servoMin){
+    curHServoAngle+=servoAdjustmentRate;
+    hServo.write(curHServoAngle);
+  }
+}
+
+void vServoUp(){
+  if (curVServoAngle < servoMax){
+    curVServoAngle-=servoAdjustmentRate;
+    vServo.write(curVServoAngle);
+  }
+}
+
+void vServoDown(){
+  if (curVServoAngle > servoMin){
+    curVServoAngle+=servoAdjustmentRate;
+    vServo.write(curVServoAngle);
+  }
 }
 
 void loop() {
@@ -36,6 +81,7 @@ void loop() {
         digitalWrite(down, LOW);
         digitalWrite(left, LOW);
 
+        vServoUp();
       break;
 
       case 'c':
@@ -44,6 +90,8 @@ void loop() {
         digitalWrite(right, HIGH);
         digitalWrite(down, LOW);
         digitalWrite(left, LOW);
+
+        hServoUp();
       break;
       
       case 'd':
@@ -52,6 +100,8 @@ void loop() {
         digitalWrite(right, LOW);
         digitalWrite(down, HIGH);
         digitalWrite(left, LOW);
+
+        vServoDown();
       break;
       
       case 'e':
@@ -60,39 +110,54 @@ void loop() {
         digitalWrite(right, LOW);
         digitalWrite(down, LOW);
         digitalWrite(left, HIGH);
+
+        hServoDown();
       break;
 
       case 'f':
-//        Serial.println("Go left!");
         digitalWrite(up, HIGH);
         digitalWrite(right, HIGH);
         digitalWrite(down, LOW);
         digitalWrite(left, LOW);
+
+        hServoUp();
+        vServoUp();
       break;
 
       case 'g':
-//        Serial.println("Go left!");
         digitalWrite(up, HIGH);
         digitalWrite(right, LOW);
         digitalWrite(down, LOW);
         digitalWrite(left, HIGH);
+        
+        hServoDown();
+        vServoUp();
       break;
 
       case 'h':
-//        Serial.println("Go left!");
         digitalWrite(up, LOW);
         digitalWrite(right, HIGH);
         digitalWrite(down, HIGH);
         digitalWrite(left, LOW);
+
+        hServoUp();
+        vServoDown();
       break;
 
         case 'i':
-//        Serial.println("Go left!");
         digitalWrite(up, LOW);
         digitalWrite(right, LOW);
         digitalWrite(down, HIGH);
         digitalWrite(left, HIGH);
+
+        hServoDown();
+        vServoDown();
       break;
     }
   }
+  delay(100);
+//  else{
+//    hServo.write(50);
+//    vServo.write(50);  
+//  }
 }

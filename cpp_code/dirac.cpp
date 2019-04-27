@@ -98,7 +98,7 @@ for (int i = 0; i < context.ndevices(); i++) {
     int camera_device = parser.get<int>("camera");
     VideoCapture capture;
     //-- 2. Read the video stream
-    capture.open( 0 );
+    capture.open( 2 );
     if ( ! capture.isOpened() )
     {
         cout << "--(!)Error opening video capture\n";

@@ -1,4 +1,4 @@
-
+[
 #include <Servo.h>  //add '<' and '>' before and after servo.h
  
 int servoPin = 6;
@@ -22,7 +22,7 @@ void loop()
    delay(1000);          // Wait 1 second
    servo.write(90);      // Turn SG90 servo back to 90 degrees (center position)
    delay(1000);          // Wait 1 second
-   servo.write(135);     // Turn SG90 servo Right to 135 degrees
+   servo.write(70);     // Turn SG90 servo Right to 135 degrees
    delay(1000);          // Wait 1 second
    servo.write(90);      // Turn SG90 servo back to 90 degrees (center position)
    delay(1000);
@@ -33,17 +33,16 @@ void loop()
 //control the servo's speed  
 
 //if you change the delay value (from example change 50 to 10), the speed of the servo changes
-  for(servoAngle = 0; servoAngle < 180; servoAngle++)  //move the micro servo from 0 degrees to 180 degrees
+  for(servoAngle = 0; servoAngle < 20; servoAngle++)  //move the micro servo from 0 degrees to 180 degrees
   {                                  
     servo.write(servoAngle);              
     delay(50);                  
   }
 
-  for(servoAngle = 180; servoAngle > 0; servoAngle--)  //now move back the micro servo from 0 degrees to 180 degrees
+  for(servoAngle = 20; servoAngle > 0; servoAngle--)  //now move back the micro servo from 0 degrees to 180 degrees
   {                                
     servo.write(servoAngle);          
     delay(10);      
   }
   //end control the servo's speed  
 }
-
