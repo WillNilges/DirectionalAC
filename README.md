@@ -9,3 +9,8 @@ Directional AC utilizes OpenCV, a USB camera, an Arduino, a few servos, and thre
   - Build another one
     - Make two work as a pair. Keep scaling up the system from there.
   - Implement CUDA for better performance
+
+## Images
+![DirectionalAC in the CSH research room.](https://raw.githubusercontent.com/WillNilges/DirectionalAC/master/images/testbenchmug.jpg)
+
+![A shot of DirectionalAC in action during ImagineRIT.](https://raw.githubusercontent.com/WillNilges/DirectionalAC/master/images/demodutch.jpg)
