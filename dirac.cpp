@@ -2,9 +2,6 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/core.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/cudaarithm.hpp"
-#include "opencv2/cudaobjdetect.hpp"
 
 #include <iostream>
 #include <csignal>
@@ -33,24 +30,25 @@ int USB = open( "/dev/ttyACM0", O_RDWR| O_NOCTTY );
 /** @function main */
 int main( int argc, const char** argv )
 {
-    CommandLineParser parser(argc, argv,
+        CommandLineParser parser(argc, argv,
                              "{help h||}"
                              "{face_cascade|haarcascade_frontalface_alt.xml|Path to face cascade.}"
                              "{eyes_cascade|haarcascade_eye_tree_eyeglasses.xml|Path to eyes cascade.}"
-                             "{camera|1|Camera device number.}");
+                             "{camera|0|Camera device number.}");
 
     parser.about( "\nThis program uses cv::CascadeClassifier class to detect Faces in a video stream and directs a car's AC unit to automatically aim at the face.\n"
                   "You can use Haar or LBP features.\n\n" );
     parser.printMessage();
-// This code is all BULLSHIT!
-    String face_cascade_name = parser.get<String>(0);
-    String eyes_cascade_name = parser.get<String>(1);
+
+    String face_cascade_name = parser.get<String>("face_cascade");
+    String eyes_cascade_name = parser.get<String>("eyes_cascade");
 
     //-- 1. Load the cascades
     cout << "Loading face cascade...\n";
     cout << face_cascade_name;
     cout << "\n";
 
+    // This code is all BULLSHIT!
     if( !face_cascade.load( face_cascade_name ) )
     {
         cout << "--(!)Error loading face cascade\n";
@@ -66,10 +64,10 @@ int main( int argc, const char** argv )
 //        return -1;
     };
 
-    int camera_device = parser.get<int>(2);
+    int camera_device = parser.get<int>("camera");
     VideoCapture capture;
     //-- 2. Read the video stream
-    capture.open( camera_device );
+    capture.open( 2 );
     if ( ! capture.isOpened() )
     {
         cout << "--(!)Error opening video capture\n";
@@ -79,33 +77,33 @@ int main( int argc, const char** argv )
     struct termios tty;
     struct termios tty_old;
     memset (&tty, 0, sizeof tty);
-    
+
     /* Error Handling */
     if ( tcgetattr ( USB, &tty ) != 0 ) {
        std::cout << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
     }
-    
+
     /* Save old tty parameters */
     tty_old = tty;
-    
+
     /* Set Baud Rate */
     cfsetospeed (&tty, (speed_t)B115200);
     cfsetispeed (&tty, (speed_t)B115200);
-    
+
     /* Setting other Port Stuff */
     tty.c_cflag     &=  ~PARENB;            // Make 8n1
     tty.c_cflag     &=  ~CSTOPB;
     tty.c_cflag     &=  ~CSIZE;
     tty.c_cflag     |=  CS8;
-    
+
     tty.c_cflag     &=  ~CRTSCTS;           // no flow control
     tty.c_cc[VMIN]   =  1;                  // read doesn't block
     tty.c_cc[VTIME]  =  5;                  // 0.5 seconds read timeout
     tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
-    
+
     /* Make raw */
     cfmakeraw(&tty);
-    
+
     /* Flush Port, then applies attributes */
     tcflush( USB, TCIFLUSH );
     if ( tcsetattr ( USB, TCSANOW, &tty ) != 0) {
@@ -159,18 +157,7 @@ void detectAndDisplay( Mat frame )
 
         Mat faceROI = frame_gray( faces[i] );
 
-        //-- In each face, detect eyes
-        std::vector<Rect> eyes;
-        eyes_cascade.detectMultiScale( faceROI, eyes );
-
-        for ( size_t j = 0; j < eyes.size(); j++ )
-        {
-            Point eye_center( faces[i].x + eyes[j].x + eyes[j].width/2, faces[i].y + eyes[j].y + eyes[j].height/2 );
-            int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
-            circle( frame, eye_center, radius, Scalar( 255, 0, 0 ), 4 );
-        }
-
-	//-- Check if the face is within the rectangle.
+        // Check if the face is within the rectangle.
         bool width_ok = false;
         bool mv_left = false;
         bool mv_right = false;
@@ -189,74 +176,60 @@ void detectAndDisplay( Mat frame )
         if (center.x < upper_width_bound && center.x > lower_width_bound){
             width_ok = true;
             cv::putText(frame,"Face is within width of rect.",Point(10, height-50), font, 0.5,Scalar(255,255,255),2,cv::LINE_AA);
-            //cmd[0] = 'h';
         }else if (center.x > upper_width_bound){
-            mv_right = true;            
+            mv_right = true;
             cv::putText(frame,"MOVE RIGHT.",Point(10, height-50), font, 0.5,Scalar(0,0,255),2,cv::LINE_AA);
-            //cmd[0] = 'r';
         }else if (center.x < lower_width_bound){
             mv_left = true;
             cv::putText(frame,"MOVE LEFT.",Point(10, height-50), font, 0.5,Scalar(0,0,255),2,cv::LINE_AA);
-            //cmd[0] = 'l';
         }
 
         if (center.y < upper_height_bound && center.y > lower_height_bound){
             height_ok = true;
             cv::putText(frame,"Face is within height of rect.",Point(10, height-25), font, 0.5,Scalar(255,255,255),2,cv::LINE_AA);
-            //cmd[0] = 'v';
-    	}else if (center.y > upper_height_bound){
+        }else if (center.y > upper_height_bound){
             mv_up = true;
             cv::putText(frame,"MOVE UP.",Point(10, height-25), font, 0.5,Scalar(0,0,255),2,cv::LINE_AA);
-            //cmd[0] = 'u';
         }else if (center.y < lower_height_bound){
             mv_down = true;
             cv::putText(frame,"MOVE DOWN.",Point(10, height-25), font, 0.5,Scalar(0,0,255),2,cv::LINE_AA);
-            //cmd[0] = 'd';
         }
 
         if (width_ok && height_ok){
             cv::putText(frame,"Face OK",Point(10, 25), font, 1,Scalar(0,255,0),2,cv::LINE_AA);
             cmd[0] = 'a';
         }
-        if (mv_up){
-            cmd[0] = 'b';
-        }
-        if (mv_right){
-            cmd[0] = 'c';
-        }
-        if (mv_down){
-            cmd[0] = 'd';
-        }
-        if (mv_left){
-            cmd[0] = 'e';
-        }
-        if (mv_up && mv_right){
-            cmd[0] = 'f';
-        }
-        if (mv_up && mv_left){
-            cmd[0] = 'g';
-        }
-        if (mv_down && mv_right){
-            cmd[0] = 'h';
-        }
-        if (mv_down && mv_left){
-            cmd[0] = 'i';
-        }
 
-        write( USB, cmd, 2 );	
-//        cout << "Wrote " << cmd[0] << " ";
+        if (mv_up)
+            cmd[0] = 'b';
+        if (mv_right)
+            cmd[0] = 'c';
+        if (mv_down)
+            cmd[0] = 'd';
+        if (mv_left)
+            cmd[0] = 'e';
+        if (mv_up && mv_right)
+            cmd[0] = 'f';
+        if (mv_up && mv_left)
+            cmd[0] = 'g';
+        if (mv_down && mv_right)
+            cmd[0] = 'h';
+        if (mv_down && mv_left)
+            cmd[0] = 'i';
+
+        write( USB, cmd, 2 );
     }
 
-    //-- Show what you got
+    //-- Display what the webcam sees
     imshow( "Capture - Face detection", frame );
 }
 
 void signalHandler( int signum ) {
    cout << "Interrupt signal (" << signum << ") received.\n";
 
-   // cleanup and close up stuff here  
-   // terminate program  
+   // cleanup and close up stuff here
+   // terminate program
    close(USB);
-   exit(signum);  
+   exit(signum);
 }
 
