@@ -105,6 +105,10 @@ for (int i = 0; i < context.ndevices(); i++) {
 //        return -1;
     }
 
+	// change camera resolution
+	capture.set(3, 640);
+	capture.set(4, 480);
+
     struct termios tty;
     struct termios tty_old;
     memset (&tty, 0, sizeof tty);
