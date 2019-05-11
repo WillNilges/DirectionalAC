@@ -1,19 +1,25 @@
 #include <Servo.h>
 
+// Assign LED pins to variables
 int up = 13;
 int right = 12;
 int down = 11;
 int left = 10;
 
+// Assign servo pins to variables
 int horizontalServo = 5;
 int verticalServo = 6;
+
+// Maximum range of motion for servos
 int servoMax = 120;
 int servoMin = 20;
 
+// Maximum adjustment possible per tick
 int curHServoAngle = 70;
 int curVServoAngle = 70;
 int servoAdjustmentRate = 1;
 
+// Set up servo variables
 Servo hServo;
 Servo vServo;
 
@@ -67,7 +73,6 @@ void loop() {
 
     switch(serialIn){
       case 'a':
-//        Serial.println("Face OK");
           digitalWrite(up, LOW);
           digitalWrite(right, LOW);
           digitalWrite(down, LOW);
@@ -75,7 +80,6 @@ void loop() {
       break;
 
       case 'b':
-//        Serial.println("Go up!");
         digitalWrite(up, HIGH);
         digitalWrite(right, LOW);
         digitalWrite(down, LOW);
@@ -85,7 +89,6 @@ void loop() {
       break;
 
       case 'c':
-//        Serial.println("Go right!");
         digitalWrite(up, LOW);
         digitalWrite(right, HIGH);
         digitalWrite(down, LOW);
@@ -95,7 +98,6 @@ void loop() {
       break;
       
       case 'd':
-//        Serial.println("Go down!");
         digitalWrite(up, LOW);
         digitalWrite(right, LOW);
         digitalWrite(down, HIGH);
@@ -105,7 +107,6 @@ void loop() {
       break;
       
       case 'e':
-//        Serial.println("Go left!");
         digitalWrite(up, LOW);
         digitalWrite(right, LOW);
         digitalWrite(down, LOW);
@@ -155,13 +156,5 @@ void loop() {
       break;
     }
   }
-  //Serial.print("hServo ");
-  //Serial.print(curHServoAngle + "\n");
-  //Serial.print("vServo ");
-  //Serial.print(curVServoAngle + "\n");
   delay(25);
-//  else{
-//    hServo.write(50);
-//    vServo.write(50);  
-//  }
 }
