@@ -10,8 +10,8 @@ int verticalServo = 6;
 int servoMax = 120;
 int servoMin = 20;
 
-int curHServoAngle = 50;
-int curVServoAngle = 50;
+int curHServoAngle = 70;
+int curVServoAngle = 70;
 int servoAdjustmentRate = 1;
 
 Servo hServo;
@@ -155,7 +155,11 @@ void loop() {
       break;
     }
   }
-  delay(100);
+  //Serial.print("hServo ");
+  //Serial.print(curHServoAngle + "\n");
+  //Serial.print("vServo ");
+  //Serial.print(curVServoAngle + "\n");
+  delay(25);
 //  else{
 //    hServo.write(50);
 //    vServo.write(50);  
