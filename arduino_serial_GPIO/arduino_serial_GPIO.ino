@@ -1,5 +1,13 @@
 #include <Servo.h>
 
+/*
+Arduino file for controlling the servos.
+Receives instructions from computer over
+serial, interprets them, and carries them
+out by adjusting the positions of the
+servos.
+*/
+
 // Assign LED pins to variables
 int up = 13;
 int right = 12;
@@ -27,12 +35,17 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
+  // Set the LED output pins to output mode (duhhhh)
   pinMode(up, OUTPUT);
   pinMode(right, OUTPUT);
   pinMode(down, OUTPUT);
   pinMode(left, OUTPUT);
-  pinMode(7, OUTPUT);
 
+  // Not sure what Pin 7 does. It used to connect to the MOSFET.
+  // Might be able to use as status light.
+  //pinMode(7, OUTPUT);
+
+  //Set up servo output pins.
   hServo.attach(horizontalServo);
   vServo.attach(verticalServo);
 }
@@ -66,7 +79,8 @@ void vServoDown(){
 }
 
 void loop() {
-  digitalWrite(7, HIGH);
+
+//  digitalWrite(7, HIGH); // wtf does this pin do lol
   // put your main code here, to run repeatedly:
   if (Serial.available()>=0){
     int serialIn = Serial.read();
@@ -96,7 +110,7 @@ void loop() {
 
         hServoUp();
       break;
-      
+
       case 'd':
         digitalWrite(up, LOW);
         digitalWrite(right, LOW);
@@ -105,7 +119,7 @@ void loop() {
 
         vServoDown();
       break;
-      
+
       case 'e':
         digitalWrite(up, LOW);
         digitalWrite(right, LOW);
@@ -130,7 +144,7 @@ void loop() {
         digitalWrite(right, LOW);
         digitalWrite(down, LOW);
         digitalWrite(left, HIGH);
-        
+
         hServoDown();
         vServoUp();
       break;
@@ -156,5 +170,6 @@ void loop() {
       break;
     }
   }
-  delay(25);
+  delay(25); // Wait a little bit before receiving the next instruction.
+             // This cuts down on errors.
 }

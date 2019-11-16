@@ -4,6 +4,16 @@ Facial tracking-enabled climate control so you can stay cool wherever you are.
 This is a project made for CSH's Imagine RIT 2019 project.
 Directional AC utilizes OpenCV, a USB camera, an Arduino, a few servos, and three 3D printed brackets to enable an AC unit to automatically adjust its airstream to you wherever you are in the cabin.
 
+## Building and running
+
+```
+$ cmake .
+
+$ make
+
+$ ./dirac
+```
+
 ## Future Plans:
   - Improve the CAD
   - Build another one
