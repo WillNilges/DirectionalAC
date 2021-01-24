@@ -1,4 +1,7 @@
 # DirectionalAC
+
+![image](https://forthebadge.com/images/badges/powered-by-electricity.svg) ![image](https://forthebadge.com/images/badges/contains-tasty-spaghetti-code.svg)
+
 Facial tracking-enabled climate control so you can stay cool wherever you are.
 
 This is a project made for CSH's Imagine RIT 2019 project.
